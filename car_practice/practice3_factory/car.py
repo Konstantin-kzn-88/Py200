@@ -1,5 +1,5 @@
 import time
-
+import random
 from driver import Driver
 
 
@@ -100,12 +100,25 @@ class Car:
         try:
             if self.__ready_status():
                 for i in range(distance):
-                    print(f'Машина проехала {i+1} км.')
+                    print(f'\rМашина проехала {i+1} км.', end='')
+                    self.__traffic_lights__()
                     time.sleep(0.3)
-                print('Путь пройден')
+                    self.__mileage += 1
+                print('\nПуть пройден')
         except (EngineIsNotRunning, DriverNotFoundError) as e:
             print(f"Машина не может начать движение, т.к. {e}")
     # /Блок отработки движения машины
+
+    # Блок светофора
+    def __traffic_lights__(self):
+        """
+        Светофор
+        """
+        rand_bool = random.choice([True,False]) # случайно выбирается состояние светофора
+        if rand_bool:
+            print("Сфетофор красный, нужно подождать")
+            time.sleep(1) # если светофор True красный, то ждем 1 секунду
+    # /Блок светофора
 
     # Блок работы с защищёнными методами
     @property
@@ -148,9 +161,10 @@ if __name__ == '__main__':
     # /Блок работы с защищёнными методами
 
     # Блок отработки движения машины
-    # car.start_engine()
-    # car.driver = Driver("Иван")
-    # car.move()
+    car.start_engine()
+    car.driver = Driver("Иван")
+    car.move()
+    car.move()
     # /Блок отработки движения машины
 
     # Блок отработки свойств
