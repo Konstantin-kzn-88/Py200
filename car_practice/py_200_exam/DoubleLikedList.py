@@ -70,7 +70,7 @@ class LinkedList(MutableSequence):
 
     def bypass_list(self) -> None:
         """
-        Функция обхода односвязного списка
+        Функция обхода связного списка
         """
         if self.start_node is None:
             print("В списке нет элементов")
@@ -78,7 +78,7 @@ class LinkedList(MutableSequence):
         else:
             n = self.start_node
             while n is not None:
-                print(f'_item = {n._item}, _next_item = {n._next_item}, _previous_item = {n._previous_item}')
+                print(f'n_item = {n._item}, \t _next_item = {n._next_item}, \t_previous_item = {n._previous_item}, \t n = {n}')
                 n = n._next_item
 
     def append(self, data: Any) -> None:
@@ -124,9 +124,8 @@ class LinkedList(MutableSequence):
         return count
 
     def __delitem__(self, element) -> None:
-        """Удаление конкретного элемента"""
+
         if self.start_node is None:
-            print("В списке нет элемента для удаления")
             return
 
         if self.start_node._item == element:
@@ -188,47 +187,177 @@ class DoubleLinkedList(LinkedList):
         Функция вставки в конец связного списка
         :param data - данные узла
         """
-        new_node = Node(data)
         if self.start_node is None:
+            new_node = Node(data)
             self.start_node = new_node
             return
         n = self.start_node
         while n._next_item is not None:
             n = n._next_item
-            n._previous_item = n
+        new_node = Node(data)
         n._next_item = new_node
-        new_node._previous_item = n._next_item
+        new_node._previous_item = n
+
+    def insert(self, element: Any, data: Any) -> None:
+        """
+        Функция вставки после определенного элемента
+        :param data - данные узла
+        :param element - элемент списка после которого следует вставить новый узел (data)
+        """
+        if self.start_node is None:
+            print("Список пуст")
+            return
+        else:
+            n = self.start_node
+            while n is not None:
+                if n._item == element:
+                    break
+                n = n._next_item
+            if n is None:
+                print("Элемента нет в списке")
+            else:
+                new_node = Node(data)
+                new_node._previous_item = n
+                new_node._next_item = n._next_item
+                if n._next_item is not None:
+                    n._next_item._previous_item = new_node
+                n._next_item = new_node
+
+    def __delitem__(self, element: Any):
+        if self.start_node is None:
+            print("В списке нет элементов")
+            return
+        if self.start_node._next_item is None:
+            if self.start_node._item == element:
+                self.start_node = None
+            else:
+                print("Элемент не найден")
+            return
+
+        if self.start_node._item == element:
+            self.start_node = self.start_node._next_item
+            self.start_node._previous_item = None
+            return
+
+        n = self.start_node
+        while n._next_item is not None:
+            if n._item == element:
+                break
+            n = n._next_item
+        if n._next_item is not None:
+            n._previous_item._next_item = n._next_item
+            n._next_item._previous_item = n._previous_item
+        else:
+            if n._item == element:
+                n._previous_item._next_item = None
+            else:
+                print("Элемент не найден")
 
 
 
 if __name__ == "__main__":
+
+    print(" " * 20)
+    print("___Инициализация нового списка___")
+    print(" " * 20)
     # 1. Инициализируем новый список
     new_linked_list = LinkedList()
     # 2. Запустим функцию создания списка (!!! обязательно сделать узел "test_node" см. п.4)
     new_linked_list.make_new_list()
-    # 3. Добавим в конец новый узел
-    new_linked_list.append("Данные нового узла")
     # Распечатаем узлы
     new_linked_list.bypass_list()
+
+    print(" " * 20)
+    print("___Добавление нового узла___")
+    print(" " * 20)
+    # 3. Добавим в конец новый узел
+    new_linked_list.append("app_node")
+    # Распечатаем узлы
+    new_linked_list.bypass_list()
+
+    print(" " * 20)
     print("___Вставка___")
     print(" " * 20)
-    # 4. Вставить узел "125" после "test_node"
-    new_linked_list.insert("test_node", "125")
+    # 4. Вставить узел "test_node2" после "test_node"
+    new_linked_list.insert("test_node", "test_node2")
     # Распечатаем узлы
     new_linked_list.bypass_list()
-    # 5. Выведем первый элемент по индексу
+
+    # 5. Длина
+    print(" " * 20)
+    print("___Длина списка___")
+    print(" " * 20)
+    print(f'Длина списка составляет: {len(new_linked_list)}')
+
+    # 6. Удаление
+    print(" " * 20)
+    print("___Удаление элемента___")
+    print(" " * 20)
+    del new_linked_list["test_node"]
+
+    # 7. Выведем первый элемент по индексу
+    print(" " * 20)
+    print("___Элемент по индексу 1___")
+    print(" " * 20)
     print(new_linked_list[1])
-    # 6. Замена данных в узле
+
+    # 8. Замена данных в узле
+    print(" " * 20)
     print("__Замена данных в узле__")
     print(" " * 20)
-    new_linked_list[2] = "Заменные данные в узле"
-    # Распечатаем лист
+    new_linked_list[2] = "repl_node"
+    # Распечатаем узлы
     new_linked_list.bypass_list()
+
+    print(" " * 20)
     print("__Двусвязный список__")
     print(" " * 20)
-    # 7. Двусвязный список унаследованный от односвязного
+    # 9. Двусвязный список унаследованный от односвязного
     new_double_linked_list = DoubleLinkedList()
-    # 8. Запустим функцию создания списка (!!! обязательно сделать узел "test_node" см. п.4)
+    # 10. Запустим функцию создания списка (!!! обязательно сделать узел "test_node_dbl" см. п.9)
     new_double_linked_list.make_new_list()
-    # Распечатаем лист
+    # Распечатаем узлы
     new_double_linked_list.bypass_list()
+
+    print(" " * 20)
+    print("___Добавление нового узла___")
+    print(" " * 20)
+    # 11. Добавим в конец новый узел
+    new_double_linked_list.append("app_node")
+    # Распечатаем узлы
+    new_double_linked_list.bypass_list()
+
+    print(" " * 20)
+    print("___Вставка___")
+    print(" " * 20)
+    # 9. Вставить узел "test_node_dbl2" после "test_node_dbl"
+    new_double_linked_list.insert("test_node_dbl", "test_node_dbl2")
+    # Распечатаем узлы
+    new_double_linked_list.bypass_list()
+
+    # 10. Длина
+    print(" " * 20)
+    print("___Длина списка___")
+    print(" " * 20)
+    print(f'Длина списка составляет: {len(new_double_linked_list)}')
+
+    # 11. Удаление
+    print(" " * 20)
+    print("___Удаление элемента___")
+    print(" " * 20)
+    del new_double_linked_list["test_node_dbl"]
+
+    # 12. Выведем первый элемент по индексу
+    print(" " * 20)
+    print("___Элемент по индексу 1___")
+    print(" " * 20)
+    print(new_double_linked_list[1])
+
+    # 13. Замена данных в узле
+    print(" " * 20)
+    print("__Замена данных в узле__")
+    print(" " * 20)
+    new_double_linked_list[2] = "repl_node"
+    # Распечатаем узлы
+    new_double_linked_list.bypass_list()
+
